@@ -71,6 +71,10 @@ All four workflows are stored in `.github/workflows/`.
 
 **Deployment verification:** workflows wait for Kubernetes rollout completion. The backend CD also runs an in-container smoke test against the `/movies` endpoint and checks that it returns a nonempty movie list.
 
+## Screenshots and submission evidence
+
+I documented the completed project with six screenshots covering CI, CD, and end-to-end application functionality. The [screenshots gallery](screenshots/README.md) displays the recorded evidence alongside links to the successful GitHub Actions runs.
+
 ## Verified results
 
 I successfully ran all four workflows and deployed both services to an EKS cluster. Kubernetes reported both application pods as `Running` with `1/1` containers ready and zero restarts during final verification.
