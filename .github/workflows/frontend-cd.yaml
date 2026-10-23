@@ -60,23 +60,42 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.push.outputs.image }}
-    env:
-      REACT_APP_MOVIE_API_URL: ${{ vars.REACT_APP_MOVIE_API_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Verify backend URL is configured
-        run: |
-          if [ -z "$REACT_APP_MOVIE_API_URL" ]; then
-            echo "Set the GitHub Actions variable REACT_APP_MOVIE_API_URL to the deployed backend URL."
-            exit 1
-          fi
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - name: Setup kubectl for backend discovery
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.35.0
+      - name: Discover public backend URL
+        id: backend-url
+        env:
+          OVERRIDE_URL: ${{ vars.REACT_APP_MOVIE_API_URL }}
+        run: |
+          set -euo pipefail
+          if [ -n "$OVERRIDE_URL" ]; then
+            BACKEND_URL="$OVERRIDE_URL"
+          else
+            aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+            HOST=""
+            for attempt in $(seq 1 30); do
+              HOST=$(kubectl get service backend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || true)
+              [ -n "$HOST" ] && break
+              sleep 10
+            done
+            if [ -z "$HOST" ]; then
+              echo "No backend public hostname found. Deploy Backend Continuous Deployment first." >&2
+              exit 1
+            fi
+            BACKEND_URL="http://$HOST"
+          fi
+          echo "backend_url=${BACKEND_URL%/}" >> "$GITHUB_OUTPUT"
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
@@ -84,6 +103,7 @@ jobs:
         id: push
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REACT_APP_MOVIE_API_URL: ${{ steps.backend-url.outputs.backend_url }}
         run: |
           set -euo pipefail
           IMAGE="${ECR_REGISTRY}/frontend:${{ github.sha }}"
@@ -123,3 +143,12 @@ jobs:
           kubectl kustomize starter/frontend/k8s | kubectl apply -f -
           kubectl rollout status deployment/frontend --timeout=300s
           kubectl get svc frontend
+      - name: Show frontend URL
+        run: |
+          HOST=$(kubectl get service frontend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || true)
+          if [ -n "$HOST" ]; then
+            echo "### Frontend URL" >> "$GITHUB_STEP_SUMMARY"
+            echo "http://$HOST" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "LoadBalancer URL pending; run kubectl get svc frontend in AWS CloudShell." >> "$GITHUB_STEP_SUMMARY"
+          fi
