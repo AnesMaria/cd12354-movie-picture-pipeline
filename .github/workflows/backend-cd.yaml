@@ -117,3 +117,15 @@ jobs:
           kubectl kustomize starter/backend/k8s | kubectl apply -f -
           kubectl rollout status deployment/backend --timeout=300s
           kubectl get svc backend
+      - name: Smoke test deployed backend
+        run: |
+          kubectl exec deployment/backend -- python -c "from urllib.request import urlopen; import json; r=urlopen('http://127.0.0.1:5000/movies',timeout=20); data=json.load(r); assert r.status==200 and isinstance(data.get('movies'),list) and len(data['movies'])>0; print(data)"
+      - name: Show backend URL
+        run: |
+          HOST=$(kubectl get service backend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || true)
+          if [ -n "$HOST" ]; then
+            echo "### Backend API URL" >> "$GITHUB_STEP_SUMMARY"
+            echo "http://$HOST/movies" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "LoadBalancer URL pending; run kubectl get svc backend in AWS CloudShell." >> "$GITHUB_STEP_SUMMARY"
+          fi
