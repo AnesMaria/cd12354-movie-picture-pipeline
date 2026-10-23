@@ -1,38 +1,62 @@
-# Deployment Evidence — Movie Picture Pipeline
+# CI/CD Screenshots — Deployment Evidence
 
-**Meriem Zerkouk | Udacity DevOps Project**
+**Movie Picture Pipeline · Meriem Zerkouk**  
+Evidence collected after successfully deploying the React frontend and Flask backend to Amazon EKS.
 
-This folder contains screenshots recorded during successful end-to-end verification of the Movie Picture CI/CD project.
+> **Click an image to see it at full resolution.** These screenshots capture the successful runs and the end-to-end application verification. AWS demo URLs may stop working after lab cleanup, but these images remain in GitHub.
 
-## Continuous Integration
+## Evidence at a glance
 
-### Backend CI — Successful lint, test and build
-![Backend CI passed](backend-ci-success.png)
+| Stage | Backend | Frontend |
+| --- | --- | --- |
+| Continuous Integration | [✅ CI run](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39875358665) | [✅ CI run](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39875361227) |
+| Continuous Deployment | [✅ CD run](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39881585618) | [✅ CD run](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39884021891) |
+| Application verification | Flask `/movies` API | React movie catalog |
 
-### Frontend CI — Successful lint, test and build
-![Frontend CI passed](frontend-ci-success.png)
+## 1. Continuous Integration
 
-## Continuous Deployment
+### Figure 1 — Backend Continuous Integration
 
-### Backend CD — Successful ECR build/push and EKS deployment
-![Backend CD passed](backend-cd-success.png)
+Successful linting with Flake8, unit testing with pytest, and Docker build. Lint and test run in parallel; the build depends on both.
 
-### Frontend CD — Successful ECR build/push and EKS deployment
-![Frontend CD passed](frontend-cd-success.png)
+[![Backend CI: all jobs successful](movie-picture-screenshots/screenshots/backend-ci-success.png)](movie-picture-screenshots/screenshots/backend-ci-success.png)
 
-## Functional verification
+### Figure 2 — Frontend Continuous Integration
 
-### Backend Flask API — Movies JSON response
-![Backend movie API response](backend-api-movies.png)
+Successful ESLint checks, JavaScript/React tests, and Docker build with the required `REACT_APP_MOVIE_API_URL` build argument.
 
-### Frontend React application — Movies displayed from backend
-![Frontend Movie List](frontend-movie-list.png)
+[![Frontend CI: all jobs successful](movie-picture-screenshots/screenshots/frontend-ci-success.png)](movie-picture-screenshots/screenshots/frontend-ci-success.png)
 
-### Relevant workflow runs
+## 2. Continuous Deployment
 
-- [Backend CI](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39875358665)
-- [Frontend CI](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39875361227)
-- [Backend CD](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39881585618)
-- [Frontend CD](https://github.com/AnesMaria/cd12354-movie-picture-pipeline/actions/runs/39884021891)
+### Figure 3 — Backend Continuous Deployment
 
-> Public AWS endpoints are temporary lab resources and can become unavailable after cleanup. These screenshots preserve the successful verification.
+Successful automated lint, test, Docker image build and push to Amazon ECR, and Kubernetes deployment to EKS.
+
+[![Backend CD: all jobs successful](movie-picture-screenshots/screenshots/backend-cd-success.png)](movie-picture-screenshots/screenshots/backend-cd-success.png)
+
+### Figure 4 — Frontend Continuous Deployment
+
+Successful automated lint, test, Docker image build (configured with the backend URL), push to Amazon ECR, and Kubernetes deployment to EKS.
+
+[![Frontend CD: all jobs successful](movie-picture-screenshots/screenshots/frontend-cd-success.png)](movie-picture-screenshots/screenshots/frontend-cd-success.png)
+
+## 3. End-to-End Functional Verification
+
+### Figure 5 — Flask Backend API Response
+
+The deployed API returned JSON with the three expected movies.
+
+[![Backend movie API response with three movies](movie-picture-screenshots/screenshots/backend-api-movies.png)](movie-picture-screenshots/screenshots/backend-api-movies.png)
+
+### Figure 6 — React Frontend Movie List
+
+The deployed React application retrieved and displayed the same movie titles from the backend API.
+
+[![React Movie List showing three movies](movie-picture-screenshots/screenshots/frontend-movie-list.png)](movie-picture-screenshots/screenshots/frontend-movie-list.png)
+
+---
+
+**Result:** Four successful GitHub Actions CI/CD workflows and a working two-tier application running on AWS EKS.
+
+[← Back to project overview](../README.md)
