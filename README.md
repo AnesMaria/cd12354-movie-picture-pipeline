@@ -73,7 +73,30 @@ All four workflows are stored in `.github/workflows/`.
 
 ## Screenshots and submission evidence
 
-I documented the completed project with six screenshots covering CI, CD, and end-to-end application functionality. The [screenshots gallery](screenshots/README.md) displays the recorded evidence alongside links to the successful GitHub Actions runs.
+I documented my end-to-end implementation through **six real screenshots** covering the four GitHub Actions workflows and the two deployed applications. All images can be viewed at full resolution in the [complete screenshot gallery](screenshots/README.md).
+
+### Continuous Integration — both pipelines passed
+
+| Backend CI | Frontend CI |
+| :---: | :---: |
+| [![Backend CI successful](screenshots/movie-picture-screenshots/screenshots/backend-ci-success.png)](screenshots/movie-picture-screenshots/screenshots/backend-ci-success.png) | [![Frontend CI successful](screenshots/movie-picture-screenshots/screenshots/frontend-ci-success.png)](screenshots/movie-picture-screenshots/screenshots/frontend-ci-success.png) |
+| Flake8 · pytest · Docker | ESLint · React tests · Docker |
+
+### Continuous Deployment — both services deployed to EKS
+
+| Backend CD | Frontend CD |
+| :---: | :---: |
+| [![Backend CD successful](screenshots/movie-picture-screenshots/screenshots/backend-cd-success.png)](screenshots/movie-picture-screenshots/screenshots/backend-cd-success.png) | [![Frontend CD successful](screenshots/movie-picture-screenshots/screenshots/frontend-cd-success.png)](screenshots/movie-picture-screenshots/screenshots/frontend-cd-success.png) |
+| Docker → Amazon ECR → Amazon EKS | Docker → Amazon ECR → Amazon EKS |
+
+### Application verification — API and browser
+
+| Backend API response | React frontend |
+| :---: | :---: |
+| [![Backend returns movie data](screenshots/movie-picture-screenshots/screenshots/backend-api-movies.png)](screenshots/movie-picture-screenshots/screenshots/backend-api-movies.png) | [![React displays movies](screenshots/movie-picture-screenshots/screenshots/frontend-movie-list.png)](screenshots/movie-picture-screenshots/screenshots/frontend-movie-list.png) |
+| JSON containing three movie records | Movie List displays the three movie titles |
+
+**[See all six figures with detailed captions →](screenshots/README.md)**
 
 ## Verified results
 
